@@ -1,11 +1,13 @@
 {
-  "name": "Alex Placeholder",
-  "photo": "../../assets/images/author/photo.jpg",
-  "photoAlt": "PLACEHOLDER portrait of the author",
-  "shortBio": "PLACEHOLDER: Alex writes about technology, productivity and slow living. Software engineer by day, amateur cook by night.",
-  "longBio": "PLACEHOLDER: Replace this with your long bio. Write a few paragraphs about who you are, what you write about and why.\n\nAlex has spent fifteen years building software for small teams and large companies, and now writes long-form essays about tools, habits and the quieter side of working life.\n\nWhen not writing, Alex is usually in the kitchen, on a bike, or reading something with footnotes.",
+  "name": "Harsh Bora",
+  "photo": "../../assets/images/author/photo.png",
+  "photoAlt": "Harsh Bora smiling, wearing glasses and a patterned shirt",
+  "shortBio": "Endpoint management by day, gamer by night. Harsh writes about IT that actually works, games worth your time, and the internet’s best nonsense",
+  "longBio": "Hi, I’m Harsh. I work in IT, mostly in modern endpoint management. I’ve spent my time across two organisations getting new devices enrolled, configured and into people’s hands. If you’ve ever stared at an enrolment status page wondering why it’s been “identifying” for 40 minutes, we’re going to get along.\n\nThe Randos started because my interests don’t fit in one box. One day I’m deep in a compliance policy, the next I’m FPS until 2am, and somewhere in between I’m sending memes to anyone who’ll look. So this blog covers all of it: IT news and fixes, honest opinions on games, and the occasional thing that made me laugh.\n\nExpect real-world tips from someone who actually does the work, no fluff, and the odd post that has no business being here. That’s the “random” part.\n\nWhen I’m not at a keyboard, you’ll find me on casual long drives, sports and cooking.",
   "socialLinks": [
-    { "label": "Mastodon", "url": "https://mastodon.social/@placeholder" },
-    { "label": "GitHub", "url": "https://github.com/placeholder" }
+    {
+      "label": "GitHub",
+      "url": "https://https://github.com/hbb31"
+    }
   ]
 }
