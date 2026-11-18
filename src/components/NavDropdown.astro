@@ -1,0 +1,180 @@
+---
+/**
+ * Accessible disclosure dropdown (button + list of links).
+ * - Without JS: the button is hidden and a plain link to /blog/#categories is shown.
+ * - With JS: Enter/Space toggles, ArrowDown/ArrowUp/Home/End move focus,
+ *   Esc closes and returns focus, and it closes when focus or a click leaves it.
+ */
+interface Props {
+  label: string;
+  items: { href: string; label: string; current?: boolean }[];
+  fallbackHref: string;
+  current?: boolean;
+}
+import Icon from './Icon.astro';
+const { label, items, fallbackHref, current = false } = Astro.props;
+const id = `dropdown-${label.toLowerCase().replace(/\W+/g, '-')}`;
+---
+
+<div class="dropdown" data-dropdown>
+  <a class="nav-link dropdown__fallback" href={fallbackHref} aria-current={current ? 'page' : undefined}>
+    {label}
+  </a>
+  <button
+    type="button"
+    class="nav-link dropdown__button"
+    aria-expanded="false"
+    aria-controls={id}
+    data-current={current ? 'true' : undefined}
+  >
+    {label}
+    <Icon name="chevron" size={16} />
+  </button>
+  <ul class="dropdown__menu" id={id} hidden>
+    {items.map((item) => (
+      <li>
+        <a href={item.href} aria-current={item.current ? 'page' : undefined}>
+          {item.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .dropdown {
+    position: relative;
+  }
+
+  .dropdown__button {
+    display: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  :global(.js) .dropdown__button {
+    display: inline-flex;
+  }
+
+  :global(.js) .dropdown__fallback {
+    display: none;
+  }
+
+  .dropdown__button :global(svg) {
+    transition: transform var(--transition);
+  }
+
+  .dropdown__button[aria-expanded='true'] :global(svg) {
+    transform: rotate(180deg);
+  }
+
+  .dropdown__menu {
+    list-style: none;
+    margin: 0;
+    padding: var(--space-2);
+    min-width: 13rem;
+    background: var(--color-bg);
+    border: var(--hairline);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.08);
+    z-index: 50;
+  }
+
+  @media (min-width: 48rem) {
+    .dropdown__menu {
+      position: absolute;
+      top: calc(100% + var(--space-2));
+      left: 0;
+    }
+  }
+
+  @media (max-width: 47.99rem) {
+    .dropdown__menu {
+      box-shadow: none;
+      border: 0;
+      padding: 0 0 0 var(--space-4);
+    }
+  }
+
+  .dropdown__menu a {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .dropdown__menu a:hover,
+  .dropdown__menu a:focus-visible {
+    background: var(--color-surface);
+    color: var(--color-accent);
+  }
+
+  .dropdown__menu a[aria-current='page'] {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+</style>
+
+<script>
+  function setup(root: HTMLElement) {
+    const button = root.querySelector<HTMLButtonElement>('.dropdown__button')!;
+    const menu = root.querySelector<HTMLElement>('.dropdown__menu')!;
+    const links = () => [...menu.querySelectorAll<HTMLAnchorElement>('a')];
+
+    const open = (focus?: 'first' | 'last') => {
+      button.setAttribute('aria-expanded', 'true');
+      menu.hidden = false;
+      if (focus === 'first') links()[0]?.focus();
+      if (focus === 'last') links().at(-1)?.focus();
+    };
+    const close = (returnFocus = false) => {
+      button.setAttribute('aria-expanded', 'false');
+      menu.hidden = true;
+      if (returnFocus) button.focus();
+    };
+    const isOpen = () => button.getAttribute('aria-expanded') === 'true';
+
+    button.addEventListener('click', () => (isOpen() ? close() : open()));
+    button.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        open('first');
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        open('last');
+      }
+    });
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen()) {
+        e.preventDefault();
+        close(true);
+        return;
+      }
+      if (e.target === button) return; // the button's own handler already moved focus
+      const items = links();
+      const i = items.indexOf(document.activeElement as HTMLAnchorElement);
+      if (i === -1) return;
+      let next: number | undefined;
+      if (e.key === 'ArrowDown') next = (i + 1) % items.length;
+      if (e.key === 'ArrowUp') next = (i - 1 + items.length) % items.length;
+      if (e.key === 'Home') next = 0;
+      if (e.key === 'End') next = items.length - 1;
+      if (next !== undefined) {
+        e.preventDefault();
+        items[next]?.focus();
+      }
+    });
+    root.addEventListener('focusout', (e) => {
+      if (!root.contains(e.relatedTarget as Node | null)) close();
+    });
+    document.addEventListener('click', (e) => {
+      if (isOpen() && !root.contains(e.target as Node)) close();
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-dropdown]').forEach(setup);
+</script>

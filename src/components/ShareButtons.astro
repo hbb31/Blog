@@ -1,0 +1,136 @@
+---
+/**
+ * Privacy-friendly sharing: plain share-intent links (no third-party JS, no
+ * cookies). "Copy link" and the native "Share…" button are progressive
+ * enhancements that only appear when JavaScript and the APIs are available.
+ */
+import Icon from './Icon.astro';
+interface Props {
+  url: string;
+  title: string;
+  text?: string;
+}
+const { url, title, text = '' } = Astro.props;
+const u = encodeURIComponent(url);
+const t = encodeURIComponent(title);
+
+const links = [
+  { name: 'X', icon: 'x', href: `https://x.com/intent/post?url=${u}&text=${t}` },
+  { name: 'LinkedIn', icon: 'linkedin', href: `https://www.linkedin.com/sharing/share-offsite/?url=${u}` },
+  { name: 'Facebook', icon: 'facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${u}` },
+  { name: 'Reddit', icon: 'reddit', href: `https://www.reddit.com/submit?url=${u}&title=${t}` },
+  { name: 'Email', icon: 'mail', href: `mailto:?subject=${t}&body=${encodeURIComponent(`${title}\n\n${url}`)}` },
+] as const;
+---
+
+<section class="share" aria-labelledby="share-heading">
+  <h2 id="share-heading" class="share__heading">
+    Share this post
+  </h2>
+  <ul class="share__list">
+    {links.map((l) => (
+      <li>
+        <a
+          class="share__button"
+          href={l.href}
+          target={l.name === 'Email' ? undefined : '_blank'}
+          rel="noopener noreferrer"
+          aria-label={l.name === 'Email' ? 'Share by email' : `Share on ${l.name} (opens in a new tab)`}
+          data-share={l.name.toLowerCase()}
+        >
+          <Icon name={l.icon} size={18} />
+          <span>{l.name}</span>
+        </a>
+      </li>
+    ))}
+    <li data-copy-item hidden>
+      <button type="button" class="share__button" data-copy-link={url} aria-label="Copy link to this post">
+        <Icon name="link" size={18} />
+        <span data-copy-label>Copy link</span>
+      </button>
+    </li>
+    <li data-native-share-item hidden>
+      <button type="button" class="share__button" data-native-share data-url={url} data-title={title} data-text={text}>
+        <Icon name="share" size={18} />
+        <span>Share…</span>
+      </button>
+    </li>
+  </ul>
+  <p class="visually-hidden" role="status" aria-live="polite" data-share-status></p>
+</section>
+
+<style>
+  .share {
+    margin-block: var(--space-6);
+  }
+
+  .share__heading {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    margin-bottom: var(--space-3);
+  }
+
+  .share__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .share__button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 40px;
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-pill);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .share__button:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+</style>
+
+<script>
+  const status = document.querySelector<HTMLElement>('[data-share-status]');
+
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-link]').forEach((button) => {
+    if (!navigator.clipboard) return;
+    button.closest('li')!.hidden = false;
+    const label = button.querySelector<HTMLElement>('[data-copy-label]')!;
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.copyLink!);
+        label.textContent = 'Link copied';
+        if (status) status.textContent = 'Link copied to clipboard';
+        setTimeout(() => (label.textContent = 'Copy link'), 2500);
+      } catch {
+        if (status) status.textContent = 'Could not copy the link';
+      }
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-native-share]').forEach((button) => {
+    if (typeof navigator.share !== 'function') return;
+    button.closest('li')!.hidden = false;
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.share({ title: button.dataset.title, text: button.dataset.text, url: button.dataset.url });
+      } catch {
+        /* user cancelled */
+      }
+    });
+  });
+</script>

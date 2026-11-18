@@ -1,0 +1,263 @@
+---
+import { getCategories, getNavPages, getSettings, categoryUrl } from '../lib/content';
+import NavDropdown from './NavDropdown.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import Icon from './Icon.astro';
+
+const [settings, categories, navPages] = await Promise.all([getSettings(), getCategories(), getNavPages()]);
+const path = Astro.url.pathname;
+
+// Order: Home | Blog | Categories ▾ | About | extra CMS pages | Contact
+const contactPages = navPages.filter((p) => p.data.template === 'contact');
+const otherPages = navPages.filter((p) => p.data.template !== 'contact');
+const pageLinks = [...otherPages, ...contactPages].map((p) => ({ href: `/${p.id}/`, label: p.data.title }));
+
+const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+const inCategory = path.startsWith('/blog/category/');
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="site-title" href="/">
+      {settings.title}
+    </a>
+
+    <button type="button" class="menu-button" aria-expanded="false" aria-controls="site-nav" hidden>
+      <Icon name="menu" />
+      <span>Menu</span>
+    </button>
+
+    <nav id="site-nav" class="site-nav" aria-label="Main">
+      <ul class="site-nav__list">
+        <li>
+          <a class="nav-link" href="/" aria-current={isCurrent('/') ? 'page' : undefined}>
+            Home
+          </a>
+        </li>
+        <li>
+          <a
+            class="nav-link"
+            href="/blog/"
+            aria-current={path.startsWith('/blog/') && !inCategory ? 'page' : undefined}
+          >
+            Blog
+          </a>
+        </li>
+        <li>
+          <NavDropdown
+            label="Categories"
+            fallbackHref="/blog/#categories"
+            current={inCategory}
+            items={categories.map((c) => ({
+              href: categoryUrl(c.id),
+              label: c.data.name,
+              current: path.startsWith(categoryUrl(c.id)),
+            }))}
+          />
+        </li>
+        {pageLinks.map((l) => (
+          <li>
+            <a class="nav-link" href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>
+              {l.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="site-nav__tools">
+        <form class="header-search" action="/search/" method="get" role="search">
+          <label class="visually-hidden" for="header-search-input">
+            Search posts
+          </label>
+          <input
+            class="input"
+            id="header-search-input"
+            type="search"
+            name="q"
+            placeholder="Search…"
+            autocomplete="off"
+          />
+          <button class="icon-button" type="submit" aria-label="Search">
+            <Icon name="search" />
+          </button>
+        </form>
+        <ThemeToggle />
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: var(--hairline);
+    background: var(--color-bg);
+  }
+
+  .site-header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-5);
+    padding-block: var(--space-3);
+  }
+
+  .site-title {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+    padding-block: var(--space-2);
+  }
+
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .site-nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .site-nav__tools {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  :global(.nav-link) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-3);
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+  }
+
+  :global(.nav-link:hover) {
+    color: var(--color-accent);
+    background: var(--color-surface);
+  }
+
+  :global(.nav-link[aria-current='page']),
+  :global(.nav-link[data-current='true']) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.4em;
+  }
+
+  .header-search {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+
+  .header-search .input {
+    width: 11rem;
+    padding-right: 2.5rem;
+    font-size: var(--text-sm);
+    min-height: 40px;
+  }
+
+  .header-search .icon-button {
+    position: absolute;
+    right: 2px;
+  }
+
+  :global(.icon-button) {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    background: none;
+    color: var(--color-text-muted);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  :global(.icon-button:hover) {
+    color: var(--color-accent);
+    background: var(--color-surface);
+  }
+
+  .menu-button {
+    display: none;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    padding: var(--space-2) var(--space-3);
+    background: none;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: var(--text-sm);
+  }
+
+  /* Mobile: collapse to a disclosure menu (only when JS can toggle it) */
+  @media (max-width: 47.99rem) {
+    :global(.js) .menu-button {
+      display: inline-flex;
+    }
+
+    .site-nav {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    :global(.js) .site-nav:not(.is-open) {
+      display: none;
+    }
+
+    .site-nav__list {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .site-nav__tools {
+      padding-bottom: var(--space-3);
+    }
+
+    .header-search {
+      flex: 1;
+    }
+
+    .header-search .input {
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('.menu-button');
+  const nav = document.getElementById('site-nav');
+  if (button && nav) {
+    button.hidden = false;
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') !== 'true';
+      button.setAttribute('aria-expanded', String(open));
+      nav.classList.toggle('is-open', open);
+    });
+    nav.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.classList.contains('is-open') && getComputedStyle(button).display !== 'none') {
+        // Let an open dropdown handle Esc first.
+        if (document.activeElement?.closest('[data-dropdown]')?.querySelector('[aria-expanded="true"]')) return;
+        button.setAttribute('aria-expanded', 'false');
+        nav.classList.remove('is-open');
+        button.focus();
+      }
+    });
+  }
+</script>

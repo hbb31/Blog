@@ -1,0 +1,121 @@
+---
+/**
+ * Contact form handled by Netlify Forms (detected at deploy time from the
+ * static HTML). The honeypot field `bot-field` catches spam bots.
+ * Without JS the form posts and Netlify redirects to /contact/thanks/.
+ * With JS it submits in place and shows success or error messages.
+ */
+---
+
+<form
+  class="contact-form"
+  name="contact"
+  method="POST"
+  action="/contact/thanks/"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+  data-contact-form
+>
+  <input type="hidden" name="form-name" value="contact" />
+  <p class="contact-form__honeypot" aria-hidden="true">
+    <label>
+      Leave this field empty <input name="bot-field" tabindex="-1" autocomplete="off" />
+    </label>
+  </p>
+
+  <div class="field">
+    <label for="contact-name">Name</label>
+    <input class="input" id="contact-name" name="name" type="text" required autocomplete="name" />
+  </div>
+  <div class="field">
+    <label for="contact-email">Email</label>
+    <input class="input" id="contact-email" name="email" type="email" required autocomplete="email" />
+  </div>
+  <div class="field">
+    <label for="contact-message">Message</label>
+    <textarea class="input" id="contact-message" name="message" rows="7" required></textarea>
+  </div>
+  <button class="button" type="submit">
+    Send message
+  </button>
+
+  <p class="contact-form__status" role="status" aria-live="polite" data-status hidden></p>
+</form>
+
+<style>
+  .contact-form {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 36rem;
+    margin-top: var(--space-6);
+  }
+
+  .field {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .field label {
+    font-weight: 600;
+    font-size: var(--text-sm);
+  }
+
+  textarea.input {
+    resize: vertical;
+  }
+
+  .contact-form .button {
+    justify-self: start;
+  }
+
+  .contact-form__honeypot {
+    position: absolute;
+    left: -9999px;
+  }
+
+  .contact-form__status {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-sm);
+    border: 1px solid currentColor;
+    margin: 0;
+  }
+
+  .contact-form__status[data-state='success'] {
+    color: var(--color-success);
+  }
+
+  .contact-form__status[data-state='error'] {
+    color: var(--color-error);
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  const status = form?.querySelector<HTMLElement>('[data-status]');
+  if (form && status) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+      button.disabled = true;
+      status.hidden = true;
+      try {
+        const body = new URLSearchParams(new FormData(form) as unknown as Record<string, string>).toString();
+        const res = await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body,
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        form.reset();
+        status.dataset.state = 'success';
+        status.textContent = 'Thanks! Your message has been sent.';
+      } catch {
+        status.dataset.state = 'error';
+        status.textContent = 'Sorry, your message could not be sent. Please try again, or email me directly.';
+      } finally {
+        status.hidden = false;
+        button.disabled = false;
+      }
+    });
+  }
+</script>

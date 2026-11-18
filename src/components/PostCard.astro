@@ -1,0 +1,149 @@
+---
+import { Picture } from 'astro:assets';
+import { formatDate, postUrl, readingMinutes, categoryUrl, getCategoryMap, type Post } from '../lib/content';
+
+interface Props {
+  post: Post;
+  variant?: 'default' | 'featured' | 'compact';
+  headingLevel?: 2 | 3;
+  eager?: boolean;
+}
+const { post, variant = 'default', headingLevel = 2, eager = false } = Astro.props;
+const categoryMap = await getCategoryMap();
+const cats = post.data.categories.map((c) => categoryMap.get(c.id)).filter((c) => c !== undefined);
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const url = postUrl(post);
+---
+
+<article class:list={['post-card', `post-card--${variant}`]}>
+  {variant !== 'compact' && post.data.coverImage && (
+    <a href={url} class="post-card__media" tabindex="-1" aria-hidden="true">
+      <Picture
+        src={post.data.coverImage}
+        alt=""
+        formats={['avif', 'webp']}
+        quality={70}
+        widths={variant === 'featured' ? [360, 480, 640, 800, 1200] : [320, 480, 640]}
+        sizes={variant === 'featured' ? '(min-width: 60rem) 760px, 100vw' : '(min-width: 40rem) 240px, 100vw'}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : undefined}
+      />
+    </a>
+  )}
+  <div class="post-card__body">
+    {variant !== 'compact' && (
+      <ul class="post-card__cats" aria-label="Categories">
+        {cats.map((c) => (
+          <li>
+            <a href={categoryUrl(c.id)}>{c.data.name}</a>
+          </li>
+        ))}
+      </ul>
+    )}
+    <Heading class="post-card__title">
+      <a href={url}>{post.data.title}</a>
+      {post.data.status === 'draft' && <span class="draft-badge">Draft</span>}
+    </Heading>
+    {variant !== 'compact' && <p class="post-card__excerpt">{post.data.excerpt}</p>}
+    <p class="meta post-card__meta">
+      <time datetime={post.data.publishedAt.toISOString()}>{formatDate(post.data.publishedAt)}</time>
+      {variant !== 'compact' && <span aria-hidden="true"> · </span>}
+      {variant !== 'compact' && <span>{readingMinutes(post)} min read</span>}
+    </p>
+  </div>
+</article>
+
+<style>
+  .post-card {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .post-card--default {
+    padding-block: var(--space-5);
+    border-bottom: var(--hairline);
+  }
+
+  @media (min-width: 40rem) {
+    .post-card--default:has(.post-card__media) {
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: var(--space-5);
+    }
+  }
+
+  .post-card__media img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+  }
+
+  .post-card__cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    list-style: none;
+    margin: 0 0 var(--space-2);
+    padding: 0;
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+
+  .post-card__cats a {
+    text-decoration: none;
+  }
+
+  .post-card__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    font-weight: 600;
+  }
+
+  .post-card--featured .post-card__title {
+    font-size: var(--text-3xl);
+  }
+
+  .post-card--compact .post-card__title {
+    font-size: var(--text-base);
+  }
+
+  .post-card__title a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .post-card__title a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  .post-card__excerpt {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    margin: var(--space-2) 0;
+  }
+
+  .post-card__meta {
+    margin: 0;
+  }
+
+  .post-card--featured {
+    padding-bottom: var(--space-6);
+    border-bottom: var(--hairline);
+  }
+
+  .draft-badge {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: var(--space-2);
+    padding: 0.1em 0.5em;
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    border: 1px solid var(--color-error);
+    color: var(--color-error);
+    border-radius: var(--radius-pill);
+  }
+</style>

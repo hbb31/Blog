@@ -1,0 +1,107 @@
+---
+/**
+ * Newsletter signup: a plain HTML form posting to the provider's embed
+ * endpoint (no third-party script). To switch provider, change `action`
+ * and the field names here only.
+ */
+import { getSettings } from '../lib/content';
+interface Props {
+  variant?: 'sidebar' | 'large';
+  id: string;
+}
+const { variant = 'sidebar', id } = Astro.props;
+const { newsletter } = await getSettings();
+const username = newsletter.buttondownUsername ?? '';
+const action = `https://buttondown.com/api/emails/embed-subscribe/${encodeURIComponent(username)}`;
+---
+
+<section class:list={['newsletter', `newsletter--${variant}`]} aria-labelledby={`${id}-heading`}>
+  <h2 id={`${id}-heading`} class="newsletter__heading">
+    {newsletter.heading ?? 'Subscribe'}
+  </h2>
+  {newsletter.copy && <p class="newsletter__copy">{newsletter.copy}</p>}
+  <form class="newsletter__form" action={action} method="post" target="_blank">
+    <label for={`${id}-email`} class="newsletter__label">
+      Email address
+    </label>
+    <div class="newsletter__row">
+      <input
+        class="input"
+        id={`${id}-email`}
+        type="email"
+        name="email"
+        required
+        autocomplete="email"
+        placeholder="you@example.com"
+      />
+      <input type="hidden" name="embed" value="1" />
+      <button class="button" type="submit">
+        Subscribe
+      </button>
+    </div>
+    <p class="newsletter__note">Opens a confirmation page in a new tab. Unsubscribe any time.</p>
+  </form>
+</section>
+
+<style>
+  .newsletter {
+    background: var(--color-surface);
+    border: var(--hairline);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+  }
+
+  .newsletter__heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    font-weight: 600;
+  }
+
+  .newsletter--large {
+    padding: var(--space-6);
+    border-top: 3px solid var(--color-accent);
+  }
+
+  .newsletter--large .newsletter__heading {
+    font-size: var(--text-2xl);
+  }
+
+  .newsletter__copy {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    margin: var(--space-2) 0 var(--space-4);
+  }
+
+  .newsletter--large .newsletter__copy {
+    font-size: var(--text-base);
+  }
+
+  .newsletter__label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+  }
+
+  .newsletter__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .newsletter--large .newsletter__row {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .newsletter--large .input {
+    flex: 1 1 16rem;
+    width: auto;
+  }
+
+  .newsletter__note {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin: var(--space-2) 0 0;
+  }
+</style>

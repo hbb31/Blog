@@ -1,0 +1,60 @@
+---
+/**
+ * Every CMS page (src/content/pages/*) becomes /<slug>/ with no code change.
+ * `template` adds the author profile (about) or the contact form (contact).
+ */
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AuthorBio from '../components/AuthorBio.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { mdxComponents } from '../components/mdx';
+import { getAuthor } from '../lib/content';
+
+export const getStaticPaths = (async () => {
+  // Slugs used by built-in routes; a CMS page cannot take them.
+  const RESERVED = new Set(['blog', 'search', 'rss.xml', 'robots.txt', 'keystatic', 'api', '404']);
+  const pages = await getCollection('pages');
+  const clash = pages.find((p) => RESERVED.has(p.id));
+  if (clash) throw new Error(`CMS page slug "${clash.id}" is reserved. Rename it in the CMS.`);
+  return pages.map((page) => ({ params: { slug: page.id }, props: { page } }));
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const { Content } = await render(page);
+const author = page.data.template === 'about' ? await getAuthor() : undefined;
+const paragraphs = author?.longBio?.split(/\n{2,}/) ?? [];
+---
+
+<BaseLayout title={page.data.title} description={page.data.description}>
+  <div class="container page">
+    <h1 class="page-title">{page.data.title}</h1>
+    {author && (
+      <div class="about">
+        <AuthorBio variant="about" />
+        <div class="prose">
+          {paragraphs.map((p) => (
+            <p>{p}</p>
+          ))}
+        </div>
+      </div>
+    )}
+    <div class="prose">
+      <Content components={mdxComponents} />
+    </div>
+    {page.data.template === 'contact' && <ContactForm />}
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    max-width: calc(var(--measure) + 2 * var(--gutter) + 8rem);
+    padding-block: var(--space-6) var(--space-8);
+  }
+
+  .about {
+    display: grid;
+    gap: var(--space-5);
+    margin-block: var(--space-5) var(--space-6);
+  }
+</style>

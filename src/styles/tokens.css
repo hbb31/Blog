@@ -1,0 +1,114 @@
+/*
+ * Design tokens — every colour, space, radius and font lives here.
+ * Contrast of text/background pairs is checked by `npm run check:contrast`.
+ */
+:root {
+  color-scheme: light;
+
+  /* Colour: light (warm, soft neutrals; never pure white or black) */
+  --color-bg: #faf7f2;
+  --color-surface: #f3efe7;
+  --color-text: #1f1d1a;
+  --color-text-muted: #5d574e;
+  --color-accent: #2b6359;
+  --color-accent-hover: #1f4a42;
+  --color-accent-contrast: #faf7f2;
+  --color-border: #e2dbcf;
+  --color-border-strong: #c9bfae;
+  --color-input-border: #857b6c;
+  --color-focus: #2b6359;
+  --color-callout-note: #eef0ea;
+  --color-callout-tip: #e8f0ec;
+  --color-callout-warning: #f6ecdd;
+  --color-success: #2f6a3b;
+  --color-error: #9b2c20;
+  --color-code-bg: #f7f4ee;
+
+  /* Typography */
+  --font-serif: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  /* Modular scale (ratio ~1.2) */
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9rem;
+  --text-base: 1rem;
+  --text-body: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem); /* 18px mobile → 20px desktop */
+  --text-lg: 1.2rem;
+  --text-xl: 1.44rem;
+  --text-2xl: clamp(1.5rem, 1.3rem + 0.8vw, 1.728rem);
+  --text-3xl: clamp(1.75rem, 1.4rem + 1.4vw, 2.488rem);
+  --text-4xl: clamp(2rem, 1.5rem + 2.2vw, 3rem);
+
+  --leading-body: 1.6;
+  --leading-tight: 1.25;
+  --measure: 68ch;
+
+  /* Space */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  /* Layout */
+  --container: 76rem;
+  --sidebar: 300px;
+  --gutter: clamp(1rem, 4vw, 2rem);
+
+  /* Radius and borders */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-pill: 999px;
+  --hairline: 1px solid var(--color-border);
+
+  --transition: 150ms ease;
+}
+
+/* Dark: same soft-neutral approach, never pure black */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --color-bg: #1c1b19;
+    --color-surface: #252421;
+    --color-text: #e9e5dd;
+    --color-text-muted: #aaa398;
+    --color-accent: #82c4b7;
+    --color-accent-hover: #a5d6cc;
+    --color-accent-contrast: #1c1b19;
+    --color-border: #36342f;
+    --color-border-strong: #4b4842;
+    --color-input-border: #7f7a70;
+    --color-focus: #82c4b7;
+    --color-callout-note: #26272a;
+    --color-callout-tip: #232b28;
+    --color-callout-warning: #2e2922;
+    --color-success: #8fcf9a;
+    --color-error: #f0a093;
+    --color-code-bg: #252421;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #1c1b19;
+  --color-surface: #252421;
+  --color-text: #e9e5dd;
+  --color-text-muted: #aaa398;
+  --color-accent: #82c4b7;
+  --color-accent-hover: #a5d6cc;
+  --color-accent-contrast: #1c1b19;
+  --color-border: #36342f;
+  --color-border-strong: #4b4842;
+  --color-input-border: #7f7a70;
+  --color-focus: #82c4b7;
+  --color-callout-note: #26272a;
+  --color-callout-tip: #232b28;
+  --color-callout-warning: #2e2922;
+  --color-success: #8fcf9a;
+  --color-error: #f0a093;
+  --color-code-bg: #252421;
+}

@@ -1,0 +1,25 @@
+---
+import type { GetStaticPaths } from 'astro';
+import ListingLayout from '../../../../layouts/ListingLayout.astro';
+import { getPosts, getTags, slugify, POSTS_PER_PAGE } from '../../../../lib/content';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const [tags, posts] = await Promise.all([getTags(), getPosts()]);
+  return tags.flatMap((t) =>
+    paginate(
+      posts.filter((p) => p.data.tags.some((tag) => slugify(tag) === t.slug)),
+      { pageSize: POSTS_PER_PAGE, params: { slug: t.slug }, props: { tag: t.tag, slug: t.slug } },
+    ),
+  );
+}) satisfies GetStaticPaths;
+
+const { page, tag, slug } = Astro.props;
+---
+
+<ListingLayout
+  title={`Posts tagged “${tag}”`}
+  heading={`#${tag}`}
+  intro={`Posts tagged “${tag}”.`}
+  page={page}
+  activeTag={slug}
+/>

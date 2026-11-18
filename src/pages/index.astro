@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import PostCard from '../components/PostCard.astro';
+import { getPosts, getSettings } from '../lib/content';
+
+const [posts, settings] = await Promise.all([getPosts(), getSettings()]);
+const featured = posts.find((p) => p.data.featured) ?? posts[0];
+const latest = posts.filter((p) => p !== featured).slice(0, 6);
+---
+
+<BaseLayout>
+  <div class="container with-sidebar">
+    <div>
+      <h1 class="visually-hidden">{settings.title}</h1>
+      {settings.tagline && <p class="page-intro home-tagline">{settings.tagline}</p>}
+      {featured && (
+        <section aria-labelledby="featured-heading">
+          <h2 id="featured-heading" class="section-label">
+            Featured
+          </h2>
+          <PostCard post={featured} variant="featured" headingLevel={3} eager />
+        </section>
+      )}
+      <section aria-labelledby="latest-heading" class="latest">
+        <h2 id="latest-heading" class="section-label">
+          Latest posts
+        </h2>
+        {latest.map((post) => (
+          <PostCard post={post} headingLevel={3} />
+        ))}
+        <p class="more">
+          <a class="button button--ghost" href="/blog/">
+            More posts →
+          </a>
+        </p>
+      </section>
+    </div>
+    <Sidebar />
+  </div>
+</BaseLayout>
+
+<style>
+  .home-tagline {
+    margin-bottom: var(--space-6);
+  }
+
+  .section-label {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+  }
+
+  .latest {
+    margin-top: var(--space-7);
+  }
+
+  .more {
+    margin-top: var(--space-6);
+  }
+</style>

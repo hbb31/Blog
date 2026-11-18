@@ -1,0 +1,25 @@
+---
+/**
+ * Replaces Markdown images in MDX bodies. Local images arrive as
+ * ImageMetadata and are optimised by <Image>; the Markdown image title
+ * becomes the caption: ![Alt text](./image.jpg "Caption").
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata | string;
+  alt: string;
+  title?: string;
+}
+const { src, alt, title } = Astro.props;
+---
+
+<figure>
+  {typeof src === 'string' ? (
+    <img src={src} alt={alt} loading="lazy" decoding="async" />
+  ) : (
+    <Image src={src} alt={alt} widths={[480, 800, 1200, 1600]} sizes="(min-width: 72rem) 820px, 100vw" />
+  )}
+  {title && <figcaption>{title}</figcaption>}
+</figure>

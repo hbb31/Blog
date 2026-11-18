@@ -1,0 +1,19 @@
+---
+import PostCard from './PostCard.astro';
+import type { Post } from '../lib/content';
+interface Props {
+  posts: Post[];
+  headingLevel?: 2 | 3;
+}
+const { posts, headingLevel = 2 } = Astro.props;
+---
+
+{posts.length === 0 ? (
+  <p class="meta">No posts yet.</p>
+) : (
+  <div class="post-list">
+    {posts.map((post) => (
+      <PostCard post={post} headingLevel={headingLevel} />
+    ))}
+  </div>
+)}

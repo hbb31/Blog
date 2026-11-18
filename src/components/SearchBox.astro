@@ -1,0 +1,31 @@
+---
+interface Props {
+  id: string;
+  label?: string;
+}
+const { id, label = 'Search posts' } = Astro.props;
+import Icon from './Icon.astro';
+---
+
+<form class="search-box" action="/search/" method="get" role="search">
+  <label class="visually-hidden" for={id}>
+    {label}
+  </label>
+  <input class="input" id={id} type="search" name="q" placeholder="Search posts…" autocomplete="off" />
+  <button class="button" type="submit">
+    <Icon name="search" size={18} />
+    <span class="visually-hidden">Search</span>
+  </button>
+</form>
+
+<style>
+  .search-box {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .search-box .button {
+    flex: none;
+    padding-inline: var(--space-3);
+  }
+</style>

@@ -1,0 +1,81 @@
+---
+/**
+ * Filter chips: real links to archive routes, so they work without JavaScript.
+ */
+import { getCategoriesWithCounts, getTags, categoryUrl, tagUrl } from '../lib/content';
+
+interface Props {
+  activeCategory?: string;
+  activeTag?: string;
+  showTags?: boolean;
+}
+const { activeCategory, activeTag, showTags = true } = Astro.props;
+const [cats, tags] = await Promise.all([getCategoriesWithCounts(), getTags()]);
+const allActive = !activeCategory && !activeTag;
+---
+
+<nav class="chips" id="categories" aria-label="Filter posts">
+  <h2 class="chips__label">Categories</h2>
+  <ul class="chips__list">
+    <li>
+      <a class="chip" href="/blog/" aria-current={allActive ? 'page' : undefined}>
+        All posts
+      </a>
+    </li>
+    {cats.map(({ category, count }) => (
+      <li>
+        <a
+          class="chip"
+          href={categoryUrl(category.id)}
+          aria-current={activeCategory === category.id ? 'page' : undefined}
+        >
+          {category.data.name} <span class="chip__count">{count}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+  {showTags && tags.length > 0 && (
+    <>
+      <h2 class="chips__label">Tags</h2>
+      <ul class="chips__list chips__list--tags">
+        {tags.map((t) => (
+          <li>
+            <a class="chip chip--tag" href={tagUrl(t.tag)} aria-current={activeTag === t.slug ? 'page' : undefined}>
+              #{t.tag}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+</nav>
+
+<style>
+  .chips {
+    display: grid;
+    gap: var(--space-2);
+    margin-block: var(--space-5) var(--space-4);
+  }
+
+  .chips__label {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    font-weight: 600;
+  }
+
+  .chips__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0 0 var(--space-2);
+    padding: 0;
+  }
+
+  .chip__count {
+    font-size: var(--text-xs);
+    opacity: 0.85;
+  }
+</style>

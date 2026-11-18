@@ -1,0 +1,25 @@
+---
+import type { GetStaticPaths } from 'astro';
+import ListingLayout from '../../../../layouts/ListingLayout.astro';
+import { getCategories, getPosts, POSTS_PER_PAGE } from '../../../../lib/content';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const [categories, posts] = await Promise.all([getCategories(), getPosts()]);
+  return categories.flatMap((category) =>
+    paginate(
+      posts.filter((p) => p.data.categories.some((c) => c.id === category.id)),
+      { pageSize: POSTS_PER_PAGE, params: { slug: category.id }, props: { category } },
+    ),
+  );
+}) satisfies GetStaticPaths;
+
+const { page, category } = Astro.props;
+---
+
+<ListingLayout
+  title={category.data.name}
+  heading={category.data.name}
+  intro={category.data.description}
+  page={page}
+  activeCategory={category.id}
+/>

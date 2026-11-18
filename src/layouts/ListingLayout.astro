@@ -1,0 +1,36 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import CategoryChips from '../components/CategoryChips.astro';
+import PostList from '../components/PostList.astro';
+import Pagination from '../components/Pagination.astro';
+import type { Page } from 'astro';
+import type { Post } from '../lib/content';
+
+interface Props {
+  title: string;
+  heading: string;
+  intro?: string;
+  description?: string;
+  page: Page<Post>;
+  activeCategory?: string;
+  activeTag?: string;
+}
+const { title, heading, intro, description, page, activeCategory, activeTag } = Astro.props;
+---
+
+<BaseLayout
+  title={page.currentPage > 1 ? `${title} (page ${page.currentPage})` : title}
+  description={description ?? intro}
+>
+  <div class="container with-sidebar">
+    <div>
+      <h1 class="page-title">{heading}</h1>
+      {intro && <p class="page-intro">{intro}</p>}
+      <CategoryChips activeCategory={activeCategory} activeTag={activeTag} />
+      <PostList posts={page.data} />
+      <Pagination page={page} />
+    </div>
+    <Sidebar />
+  </div>
+</BaseLayout>

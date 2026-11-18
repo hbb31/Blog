@@ -1,0 +1,18 @@
+---
+import type { GetStaticPaths } from 'astro';
+import ListingLayout from '../../layouts/ListingLayout.astro';
+import { getPosts, POSTS_PER_PAGE } from '../../lib/content';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  return paginate(await getPosts(), { pageSize: POSTS_PER_PAGE });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<ListingLayout
+  title="Blog"
+  heading="All posts"
+  intro="Essays and opinion pieces on technology, productivity and lifestyle, newest first."
+  page={page}
+/>

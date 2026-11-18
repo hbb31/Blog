@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchBox from '../components/SearchBox.astro';
+---
+
+<BaseLayout title="Page not found" description="This page could not be found.">
+  <div class="container" style="padding-block: var(--space-7); max-width: 40rem;">
+    <h1 class="page-title">Page not found</h1>
+    <p class="page-intro">
+      The page you were looking for doesn't exist, or it has moved. Try a search, or go back to the{' '}
+      <a href="/">home page</a>.
+    </p>
+    <SearchBox id="notfound-search" />
+  </div>
+</BaseLayout>

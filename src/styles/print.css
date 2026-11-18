@@ -1,0 +1,52 @@
+@media print {
+  :root {
+    --color-bg: #fff;
+    --color-text: #000;
+    --color-text-muted: #333;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .site-header,
+  .site-footer,
+  .sidebar,
+  .share,
+  .newsletter,
+  .post-nav,
+  .related,
+  .toc,
+  .skip-link,
+  .theme-toggle {
+    display: none !important;
+  }
+
+  .with-sidebar {
+    display: block;
+    padding: 0;
+  }
+
+  .prose {
+    max-width: none;
+    font-size: 11pt;
+  }
+
+  .prose a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.8em;
+    word-break: break-all;
+  }
+
+  .prose pre,
+  .prose figure,
+  .prose blockquote {
+    break-inside: avoid;
+  }
+
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+}

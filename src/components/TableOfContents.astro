@@ -1,0 +1,46 @@
+---
+import type { MarkdownHeading } from 'astro';
+interface Props {
+  headings: MarkdownHeading[];
+}
+const items = Astro.props.headings.filter((h) => h.depth === 2 && h.slug !== 'footnote-label');
+---
+
+<details class="toc">
+  <summary>Contents</summary>
+  <ol>
+    {items.map((h) => (
+      <li>
+        <a href={`#${h.slug}`}>{h.text}</a>
+      </li>
+    ))}
+  </ol>
+</details>
+
+<style>
+  .toc {
+    max-width: var(--measure);
+    margin-block: var(--space-5);
+    padding: var(--space-3) var(--space-4);
+    border: var(--hairline);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+  }
+
+  .toc summary {
+    cursor: pointer;
+    font-weight: 600;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+  }
+
+  .toc ol {
+    margin: var(--space-2) 0 0;
+    padding-left: 1.25rem;
+  }
+
+  .toc li + li {
+    margin-top: var(--space-1);
+  }
+</style>
