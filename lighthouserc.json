@@ -8,7 +8,7 @@
         "http://localhost:4321/blog/",
         "http://localhost:4321/blog/the-quiet-case-for-boring-technology/"
       ],
-      "numberOfRuns": 1,
+      "numberOfRuns": 3,
       "settings": {
         "chromeFlags": "--headless=new --no-sandbox"
       }
