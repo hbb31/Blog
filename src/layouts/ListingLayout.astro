@@ -5,7 +5,7 @@ import CategoryChips from '../components/CategoryChips.astro';
 import PostList from '../components/PostList.astro';
 import Pagination from '../components/Pagination.astro';
 import type { Page } from 'astro';
-import type { Post } from '../lib/content';
+import { IMAGE_FIRST_CATEGORIES, type Post } from '../lib/content';
 
 interface Props {
   title: string;
@@ -28,7 +28,10 @@ const { title, heading, intro, description, page, activeCategory, activeTag } = 
       <h1 class="page-title">{heading}</h1>
       {intro && <p class="page-intro">{intro}</p>}
       <CategoryChips activeCategory={activeCategory} activeTag={activeTag} />
-      <PostList posts={page.data} />
+      <PostList
+        posts={page.data}
+        layout={activeCategory && IMAGE_FIRST_CATEGORIES.has(activeCategory) ? 'grid' : 'list'}
+      />
       <Pagination page={page} />
     </div>
     <Sidebar />

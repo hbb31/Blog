@@ -38,10 +38,10 @@ test('categories dropdown items come from the CMS in order and link to archives'
   await page.goto('/');
   await page.getByRole('button', { name: 'Categories' }).click();
   const links = page.locator('.dropdown__menu a');
-  await expect(links).toHaveText(['Technology', 'Productivity', 'Lifestyle']);
+  await expect(links).toHaveText(['IT', 'Games', 'Memes', 'Random']);
   await links.nth(1).click();
-  await expect(page).toHaveURL(/\/blog\/category\/productivity\/$/);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Productivity');
+  await expect(page).toHaveURL(/\/blog\/category\/games\/$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Games');
 });
 
 test('clicking outside closes the dropdown', async ({ page }) => {
@@ -59,8 +59,8 @@ test('mobile menu is a disclosure that works by touch @mobile', async ({ page, i
   await menuButton.tap();
   await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
   await page.getByRole('button', { name: 'Categories' }).tap();
-  await page.locator('.dropdown__menu').getByRole('link', { name: 'Lifestyle' }).tap();
-  await expect(page).toHaveURL(/\/blog\/category\/lifestyle\/$/);
+  await page.locator('.dropdown__menu').getByRole('link', { name: 'Random' }).tap();
+  await expect(page).toHaveURL(/\/blog\/category\/random\/$/);
 });
 
 test('skip link moves focus to main content', async ({ page }) => {

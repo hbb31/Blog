@@ -38,6 +38,9 @@ jobs:
         run: npm test
       - name: Lighthouse CI
         run: npm run lhci
+      - name: Lighthouse metrics summary
+        if: always()
+        run: node scripts/lhci-summary.mjs || true
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

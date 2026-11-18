@@ -48,6 +48,15 @@ const images = [
     '#84a98c',
     'PLACEHOLDER figure',
   ],
+  [
+    'src/assets/images/posts/games-i-keep-coming-back-to/coverImage.jpg',
+    1600,
+    900,
+    '#3b1f5c',
+    '#c05fa8',
+    'PLACEHOLDER cover',
+  ],
+  ['src/assets/images/posts/meme-of-the-week/coverImage.jpg', 1080, 1080, '#ff5c39', '#ffc53d', 'PLACEHOLDER meme'],
   ['src/assets/images/author/photo.jpg', 600, 600, '#7a6a58', '#d6c6ad', 'PLACEHOLDER'],
   ['src/assets/images/site/defaultOgImage.jpg', 1200, 630, '#33413e', '#a3b5a6', 'PLACEHOLDER site image'],
 ];

@@ -8,6 +8,9 @@ import '../styles/print.css';
 import SEO from '../components/SEO.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+// Preload the two fonts used above the fold so text doesn't re-flow when they swap in.
+import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import serifLatin from '@fontsource-variable/source-serif-4/files/source-serif-4-latin-wght-normal.woff2?url';
 
 type Props = import('astro/types').ComponentProps<typeof SEO>;
 const seo = Astro.props;
@@ -31,6 +34,8 @@ const seo = Astro.props;
         // storage unavailable: fall back to the system preference
       }
     </script>
+    <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={serifLatin} as="font" type="font/woff2" crossorigin />
     <SEO {...seo} />
     <slot name="head" />
   </head>
