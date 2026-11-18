@@ -1,0 +1,10 @@
+dist/
+.astro/
+.netlify/
+node_modules/
+package-lock.json
+playwright-report/
+test-results/
+.lighthouseci/
+# Content is written by the CMS; don't reformat it.
+src/content/
