@@ -5,14 +5,14 @@ test.use({ javaScriptEnabled: false });
 test('category and tag filters work without JavaScript', async ({ page }) => {
   await page.goto('/blog/');
   const filters = page.getByRole('navigation', { name: 'Filter posts' });
-  await filters.getByRole('link', { name: /Lifestyle/ }).click();
-  await expect(page).toHaveURL(/\/blog\/category\/lifestyle\/$/);
+  await filters.getByRole('link', { name: /Random/ }).click();
+  await expect(page).toHaveURL(/\/blog\/category\/random\/$/);
   await expect(
-    page.getByRole('navigation', { name: 'Filter posts' }).getByRole('link', { name: /Lifestyle/ }),
+    page.getByRole('navigation', { name: 'Filter posts' }).getByRole('link', { name: /Random/ }),
   ).toHaveAttribute('aria-current', 'page');
   const titles = await page.locator('.post-list .post-card__title').allInnerTexts();
   expect(titles).toContain('A slower kitchen');
-  expect(titles).not.toContain('Deep work without the hustle');
+  expect(titles).not.toContain('The quiet case for boring technology');
 
   await page.getByRole('link', { name: '#writing' }).click();
   await expect(page).toHaveURL(/\/blog\/tag\/writing\/$/);
