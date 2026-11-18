@@ -1,0 +1,11 @@
+{
+  "name": "Alex Placeholder",
+  "photo": "../../assets/images/author/photo.jpg",
+  "photoAlt": "PLACEHOLDER portrait of the author",
+  "shortBio": "PLACEHOLDER: Alex writes about technology, productivity and slow living. Software engineer by day, amateur cook by night.",
+  "longBio": "PLACEHOLDER: Replace this with your long bio. Write a few paragraphs about who you are, what you write about and why.\n\nAlex has spent fifteen years building software for small teams and large companies, and now writes long-form essays about tools, habits and the quieter side of working life.\n\nWhen not writing, Alex is usually in the kitchen, on a bike, or reading something with footnotes.",
+  "socialLinks": [
+    { "label": "Mastodon", "url": "https://mastodon.social/@placeholder" },
+    { "label": "GitHub", "url": "https://github.com/placeholder" }
+  ]
+}

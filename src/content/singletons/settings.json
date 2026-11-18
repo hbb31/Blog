@@ -1,0 +1,18 @@
+{
+  "title": "Your Blog Name",
+  "tagline": "PLACEHOLDER tagline: long-form writing on technology, productivity and life.",
+  "siteUrl": "https://example.com",
+  "description": "PLACEHOLDER: essays and opinion pieces on technology, productivity and lifestyle.",
+  "defaultOgImage": "../../assets/images/site/defaultOgImage.jpg",
+  "newsletter": {
+    "heading": "Get new essays by email",
+    "copy": "PLACEHOLDER: One thoughtful email when a new essay is published. No spam, unsubscribe any time.",
+    "buttondownUsername": "PLACEHOLDER-username"
+  },
+  "footerText": "PLACEHOLDER: A personal blog about technology, productivity and the small things that make life better.",
+  "socialLinks": [
+    { "label": "Mastodon", "url": "https://mastodon.social/@placeholder" },
+    { "label": "GitHub", "url": "https://github.com/placeholder" },
+    { "label": "LinkedIn", "url": "https://www.linkedin.com/in/placeholder" }
+  ]
+}
