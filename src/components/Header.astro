@@ -3,6 +3,7 @@ import { getCategories, getNavPages, getSettings, categoryUrl } from '../lib/con
 import NavDropdown from './NavDropdown.astro';
 import ThemeToggle from './ThemeToggle.astro';
 import Icon from './Icon.astro';
+import Wordmark from './Wordmark.astro';
 
 const [settings, categories, navPages] = await Promise.all([getSettings(), getCategories(), getNavPages()]);
 const path = Astro.url.pathname;
@@ -18,9 +19,7 @@ const inCategory = path.startsWith('/blog/category/');
 
 <header class="site-header">
   <div class="container site-header__inner">
-    <a class="site-title" href="/">
-      {settings.title}
-    </a>
+    <Wordmark title={settings.title} />
 
     <button type="button" class="menu-button" aria-expanded="false" aria-controls="site-nav" hidden>
       <Icon name="menu" />
@@ -99,15 +98,6 @@ const inCategory = path.startsWith('/blog/category/');
     justify-content: space-between;
     gap: var(--space-3) var(--space-5);
     padding-block: var(--space-3);
-  }
-
-  .site-title {
-    font-family: var(--font-serif);
-    font-size: var(--text-xl);
-    font-weight: 600;
-    color: var(--color-text);
-    text-decoration: none;
-    padding-block: var(--space-2);
   }
 
   .site-nav {

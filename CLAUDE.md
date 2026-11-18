@@ -1,6 +1,6 @@
 # Blog + Keystatic CMS
 
-Personal blog (technology, productivity, lifestyle). Astro static site, Keystatic git-based CMS, Netlify hosting, Pagefind search.
+"The Randos": personal blog (IT, games, memes, random). Astro static site, Keystatic git-based CMS, Netlify hosting, Pagefind search.
 
 ## Commands
 
@@ -24,9 +24,12 @@ Personal blog (technology, productivity, lifestyle). Astro static site, Keystati
 - `src/lib/schemas.ts`: Zod schemas used by `src/content.config.ts`
 - posts `src/content/posts/*.mdx` (≥1 category, `status` draft|published), categories `*.yaml`, pages `*.mdx` (template default|about|contact), singletons `src/content/singletons/{author,settings}.json`
 - Images live in `src/assets/images/{collection}/{slug}/` and are referenced by relative paths.
+- Posts in `IMAGE_FIRST_CATEGORIES` (`src/lib/content.ts`, currently `memes`) use the image-first card and a grid on their archive.
+- `getPosts()` throws if a post references a deleted category (Astro alone only logs it).
 
 ## Do
 
+- Design: serif for article body text, chunky sans (`--font-display`) for headings and the wordmark, violet accent, yellow highlight (decorative only).
 - Put colours, spacing and fonts in `src/styles/tokens.css` only; run `check:contrast` after changing colours.
 - Keep JS to small vanilla `<script>`s (dropdown, menu, share, theme, search, contact). No client framework on public pages.
 - Filters and navigation must work without JS (real links).

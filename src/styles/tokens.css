@@ -10,15 +10,16 @@
   --color-surface: #f3efe7;
   --color-text: #1f1d1a;
   --color-text-muted: #5d574e;
-  --color-accent: #2b6359;
-  --color-accent-hover: #1f4a42;
+  --color-accent: #6a2bd9;
+  --color-accent-hover: #5b21b6;
+  --color-highlight: #ffd23f; /* decorative only: wordmark underline, badges */
   --color-accent-contrast: #faf7f2;
   --color-border: #e2dbcf;
   --color-border-strong: #c9bfae;
   --color-input-border: #857b6c;
-  --color-focus: #2b6359;
+  --color-focus: #6a2bd9;
   --color-callout-note: #eef0ea;
-  --color-callout-tip: #e8f0ec;
+  --color-callout-tip: #efe9fb;
   --color-callout-warning: #f6ecdd;
   --color-success: #2f6a3b;
   --color-error: #9b2c20;
@@ -27,6 +28,9 @@
   /* Typography */
   --font-serif: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, 'Times New Roman', serif;
   --font-sans: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Display: chunky sans for headings and UI personality; article body stays serif. */
+  --font-display: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --weight-display: 800;
   --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
   /* Modular scale (ratio ~1.2) */
@@ -61,7 +65,7 @@
 
   /* Radius and borders */
   --radius-sm: 4px;
-  --radius-md: 8px;
+  --radius-md: 12px;
   --radius-pill: 999px;
   --hairline: 1px solid var(--color-border);
 
@@ -76,15 +80,16 @@
     --color-surface: #252421;
     --color-text: #e9e5dd;
     --color-text-muted: #aaa398;
-    --color-accent: #82c4b7;
-    --color-accent-hover: #a5d6cc;
+    --color-accent: #b69cff;
+    --color-accent-hover: #c4b2ff;
+    --color-highlight: #ffd23f;
     --color-accent-contrast: #1c1b19;
     --color-border: #36342f;
     --color-border-strong: #4b4842;
     --color-input-border: #7f7a70;
-    --color-focus: #82c4b7;
+    --color-focus: #b69cff;
     --color-callout-note: #26272a;
-    --color-callout-tip: #232b28;
+    --color-callout-tip: #2a2535;
     --color-callout-warning: #2e2922;
     --color-success: #8fcf9a;
     --color-error: #f0a093;
@@ -98,15 +103,16 @@
   --color-surface: #252421;
   --color-text: #e9e5dd;
   --color-text-muted: #aaa398;
-  --color-accent: #82c4b7;
-  --color-accent-hover: #a5d6cc;
+  --color-accent: #b69cff;
+  --color-accent-hover: #c4b2ff;
+  --color-highlight: #ffd23f;
   --color-accent-contrast: #1c1b19;
   --color-border: #36342f;
   --color-border-strong: #4b4842;
   --color-input-border: #7f7a70;
-  --color-focus: #82c4b7;
+  --color-focus: #b69cff;
   --color-callout-note: #26272a;
-  --color-callout-tip: #232b28;
+  --color-callout-tip: #2a2535;
   --color-callout-warning: #2e2922;
   --color-success: #8fcf9a;
   --color-error: #f0a093;

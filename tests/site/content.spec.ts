@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
+// The production URL comes from Site settings in the CMS.
+const SITE = new URL(JSON.parse(readFileSync('src/content/singletons/settings.json', 'utf8')).siteUrl).origin;
+
 const POST = '/blog/the-quiet-case-for-boring-technology/';
 
 test('drafts are excluded from production output', async ({ page, request }) => {
@@ -34,7 +37,7 @@ test('share links are correct and load no third-party scripts', async ({ page })
     if (!r.url().startsWith('http://localhost')) external.push(r.url());
   });
   await page.goto(POST);
-  const url = encodeURIComponent(`https://example.com${POST}`);
+  const url = encodeURIComponent(`${SITE}${POST}`);
   const share = page.locator('.share');
   await expect(share.locator('[data-share="x"]')).toHaveAttribute(
     'href',
@@ -63,12 +66,10 @@ test('share links are correct and load no third-party scripts', async ({ page })
 
 test('post page has SEO metadata and JSON-LD', async ({ page }) => {
   await page.goto(POST);
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://example.com${POST}`);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${SITE}${POST}`);
   await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'article');
-  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
-    'content',
-    /^https:\/\/example\.com\/_astro\//,
-  );
+  const ogImage = await page.locator('meta[property="og:image"]').getAttribute('content');
+  expect(ogImage?.startsWith(`${SITE}/_astro/`)).toBe(true);
   const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
   expect(ld['@type']).toBe('Article');
   expect(ld.headline).toBe('The quiet case for boring technology');
@@ -111,6 +112,26 @@ test('contact form shows a success message when submitted', async ({ page }) => 
   await form.getByLabel('Message').fill('Hello');
   await form.getByRole('button', { name: 'Send message' }).click();
   await expect(form.getByRole('status')).toHaveText(/Thanks/);
+});
+
+test('memes use the image-first layout with meaningful alt text', async ({ page }) => {
+  await page.goto('/blog/category/memes/');
+  await expect(page.locator('.post-list--grid')).toBeVisible();
+  const card = page.locator('.post-card--image').first();
+  await expect(card.locator('img')).toHaveAttribute('alt', /meme/i);
+  await expect(card.locator('.post-card__excerpt')).toHaveCount(0);
+  // Other categories keep the classic list with excerpts.
+  await page.goto('/blog/category/information-technology/');
+  await expect(page.locator('.post-list--grid')).toHaveCount(0);
+  await expect(page.locator('.post-card__excerpt').first()).toBeVisible();
+});
+
+test('wordmark shows the site title and links home', async ({ page }) => {
+  await page.goto('/blog/');
+  const mark = page.getByRole('link', { name: 'The Randos', exact: true });
+  await expect(mark).toBeVisible();
+  await mark.click();
+  await expect(page).toHaveURL(/\/$/);
 });
 
 test('CMS pages get their own routes', async ({ request }) => {

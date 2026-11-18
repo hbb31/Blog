@@ -1,6 +1,6 @@
 # Blog
 
-A personal blog for long-form writing on technology, productivity and lifestyle, with its own git-based CMS.
+The Randos: a personal blog about IT, games, memes and random tangents, with its own git-based CMS.
 
 - **Site:** Astro 7 (static output), MDX content collections, serif reading typography, light/dark themes
 - **CMS:** Keystatic at `/keystatic`: posts, pages, categories, media, author profile, site settings

@@ -4,7 +4,9 @@ import { expect, test } from '@playwright/test';
 const pages = [
   '/',
   '/blog/',
-  '/blog/category/technology/',
+  '/blog/category/information-technology/',
+  '/blog/category/memes/',
+  '/blog/meme-of-the-week/',
   '/blog/tag/habits/',
   '/blog/the-quiet-case-for-boring-technology/',
   '/about/',

@@ -4,16 +4,37 @@ import type { Post } from '../lib/content';
 interface Props {
   posts: Post[];
   headingLevel?: 2 | 3;
+  /** "grid" lays cards out in a two-column gallery (used for image-first categories like Memes). */
+  layout?: 'list' | 'grid';
 }
-const { posts, headingLevel = 2 } = Astro.props;
+const { posts, headingLevel = 2, layout = 'list' } = Astro.props;
 ---
 
 {posts.length === 0 ? (
-  <p class="meta">No posts yet.</p>
+  <p class="meta">No posts yet. Check back soon.</p>
 ) : (
-  <div class="post-list">
+  <div class:list={['post-list', { 'post-list--grid': layout === 'grid' }]}>
     {posts.map((post) => (
       <PostCard post={post} headingLevel={headingLevel} />
     ))}
   </div>
 )}
+
+<style>
+  .post-list--grid {
+    display: grid;
+    gap: var(--space-6) var(--space-5);
+    padding-top: var(--space-4);
+  }
+
+  @media (min-width: 40rem) {
+    .post-list--grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .post-list--grid :global(.post-card) {
+    padding-block: 0;
+    border-bottom: 0;
+  }
+</style>

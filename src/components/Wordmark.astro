@@ -1,0 +1,94 @@
+---
+/**
+ * Playful wordmark built from the site title in Site settings.
+ * "The Randos" → a small tilted "the" tag + a chunky, slightly bouncing name
+ * with a highlighter underline. Plain text, so it stays accessible and crisp.
+ */
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+const match = /^(the)\s+(.+)$/i.exec(title.trim());
+const lead = match?.[1];
+const name = match?.[2] ?? title;
+---
+
+<a class="wordmark" href="/">
+  {lead && <span class="wordmark__lead">{lead}</span>}
+  {lead && ' '}
+  <span class="wordmark__name">
+    <span class="visually-hidden">{name}</span>
+    {[...name].map((ch) => (
+      <span class="wordmark__letter" aria-hidden="true">
+        {ch}
+      </span>
+    ))}
+  </span>
+</a>
+
+<style>
+  .wordmark {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 0.3rem;
+    color: var(--color-text);
+    text-decoration: none;
+    padding-block: var(--space-2);
+    line-height: 1;
+  }
+
+  .wordmark__lead {
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+    transform: rotate(-8deg) translateY(-0.55rem);
+  }
+
+  .wordmark__name {
+    position: relative;
+    isolation: isolate;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.65rem;
+    letter-spacing: -0.04em;
+  }
+
+  /* Highlighter stroke sits under the letters, not behind them. */
+  .wordmark__name::after {
+    content: '';
+    position: absolute;
+    left: -0.1em;
+    right: -0.15em;
+    bottom: -0.28em;
+    height: 0.22em;
+    border-radius: 999px;
+    background: var(--color-highlight);
+    transform: rotate(-1.5deg);
+    z-index: -1;
+  }
+
+  /* Alternating tilt gives the name a hand-set, slightly chaotic feel. */
+  .wordmark__letter {
+    display: inline-block;
+    transform: rotate(-3deg);
+    transition: transform var(--transition);
+  }
+
+  .wordmark__letter:nth-child(odd) {
+    transform: rotate(3deg) translateY(1px);
+  }
+
+  .wordmark:hover .wordmark__letter {
+    transform: rotate(0deg) translateY(-1px);
+  }
+
+  .wordmark:hover {
+    color: var(--color-text);
+  }
+</style>

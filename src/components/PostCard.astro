@@ -1,6 +1,14 @@
 ---
 import { Picture } from 'astro:assets';
-import { formatDate, postUrl, readingMinutes, categoryUrl, getCategoryMap, type Post } from '../lib/content';
+import {
+  formatDate,
+  postUrl,
+  readingMinutes,
+  categoryUrl,
+  getCategoryMap,
+  isImageFirst,
+  type Post,
+} from '../lib/content';
 
 interface Props {
   post: Post;
@@ -13,10 +21,26 @@ const categoryMap = await getCategoryMap();
 const cats = post.data.categories.map((c) => categoryMap.get(c.id)).filter((c) => c !== undefined);
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
 const url = postUrl(post);
+// Memes (and any IMAGE_FIRST_CATEGORIES) lead with a big image instead of a thumbnail.
+const imageFirst = variant === 'default' && isImageFirst(post) && post.data.coverImage !== undefined;
 ---
 
-<article class:list={['post-card', `post-card--${variant}`]}>
-  {variant !== 'compact' && post.data.coverImage && (
+<article class:list={['post-card', `post-card--${variant}`, { 'post-card--image': imageFirst }]}>
+  {imageFirst && post.data.coverImage && (
+    <a href={url} class="post-card__media post-card__media--image" tabindex="-1">
+      <Picture
+        src={post.data.coverImage}
+        alt={post.data.coverAlt ?? ''}
+        formats={['avif', 'webp']}
+        quality={75}
+        widths={[360, 480, 640, 800, 1080]}
+        sizes="(min-width: 60rem) 760px, 100vw"
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : undefined}
+      />
+    </a>
+  )}
+  {!imageFirst && variant !== 'compact' && post.data.coverImage && (
     <a href={url} class="post-card__media" tabindex="-1" aria-hidden="true">
       <Picture
         src={post.data.coverImage}
@@ -44,11 +68,11 @@ const url = postUrl(post);
       <a href={url}>{post.data.title}</a>
       {post.data.status === 'draft' && <span class="draft-badge">Draft</span>}
     </Heading>
-    {variant !== 'compact' && <p class="post-card__excerpt">{post.data.excerpt}</p>}
+    {variant !== 'compact' && !imageFirst && <p class="post-card__excerpt">{post.data.excerpt}</p>}
     <p class="meta post-card__meta">
       <time datetime={post.data.publishedAt.toISOString()}>{formatDate(post.data.publishedAt)}</time>
-      {variant !== 'compact' && <span aria-hidden="true"> · </span>}
-      {variant !== 'compact' && <span>{readingMinutes(post)} min read</span>}
+      {variant !== 'compact' && !imageFirst && <span aria-hidden="true"> · </span>}
+      {variant !== 'compact' && !imageFirst && <span>{readingMinutes(post)} min read</span>}
     </p>
   </div>
 </article>
@@ -59,19 +83,44 @@ const url = postUrl(post);
     gap: var(--space-4);
   }
 
+  /* Image-first card (Memes): the picture is the post. */
+  .post-card--image {
+    gap: var(--space-3);
+  }
+
+  .post-card__media--image {
+    display: block;
+    background: var(--color-surface);
+    border: var(--hairline);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: transform var(--transition);
+  }
+
+  .post-card__media--image:hover {
+    transform: rotate(-0.6deg) scale(1.01);
+  }
+
+  .post-card--image .post-card__media--image img {
+    width: 100%;
+    max-height: 34rem;
+    object-fit: contain;
+    border-radius: 0;
+  }
+
   .post-card--default {
     padding-block: var(--space-5);
     border-bottom: var(--hairline);
   }
 
   @media (min-width: 40rem) {
-    .post-card--default:has(.post-card__media) {
+    .post-card--default:not(.post-card--image):has(.post-card__media) {
       grid-template-columns: 240px minmax(0, 1fr);
       gap: var(--space-5);
     }
   }
 
-  .post-card__media img {
+  .post-card:not(.post-card--image) .post-card__media img {
     width: 100%;
     aspect-ratio: 16 / 9;
     object-fit: cover;
@@ -96,9 +145,10 @@ const url = postUrl(post);
   }
 
   .post-card__title {
-    font-family: var(--font-serif);
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
     font-size: var(--text-xl);
-    font-weight: 600;
+    font-weight: var(--weight-display);
   }
 
   .post-card--featured .post-card__title {
