@@ -10,9 +10,27 @@ export const POSTS_PER_PAGE = 10;
 
 /** Published posts, newest first. Drafts are included only outside production (see env.ts). */
 export async function getPosts(): Promise<Post[]> {
-  const posts = await getCollection('posts', (p) => showDrafts || p.data.status === 'published');
+  const [posts, categoryIds] = await Promise.all([
+    getCollection('posts', (p) => showDrafts || p.data.status === 'published'),
+    getCollection('categories').then((cats) => new Set(cats.map((c) => c.id))),
+  ]);
+  // Astro only logs broken references; fail the build instead, so a deleted
+  // category can't silently leave posts without one.
+  const broken = posts.flatMap((p) =>
+    p.data.categories.filter((c) => !categoryIds.has(c.id)).map((c) => `"${p.id}" → "${c.id}"`),
+  );
+  if (broken.length) {
+    throw new Error(
+      `Posts reference categories that don't exist: ${broken.join(', ')}. ` +
+        'Edit these posts in the CMS and pick an existing category, or re-create the category.',
+    );
+  }
   return posts.sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
 }
+
+/** Posts in these categories use the image-first card layout (memes are all about the picture). */
+export const IMAGE_FIRST_CATEGORIES = new Set(['memes']);
+export const isImageFirst = (post: Post) => post.data.categories.some((c) => IMAGE_FIRST_CATEGORIES.has(c.id));
 
 export async function getCategories(): Promise<Category[]> {
   const cats = await getCollection('categories');
