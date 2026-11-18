@@ -1,18 +1,27 @@
 {
-  "title": "Your Blog Name",
-  "tagline": "PLACEHOLDER tagline: long-form writing on technology, productivity and life.",
-  "siteUrl": "https://example.com",
-  "description": "PLACEHOLDER: essays and opinion pieces on technology, productivity and lifestyle.",
+  "title": "The Randos",
+  "tagline": "Tech, games and the occasional bad idea",
+  "siteUrl": "https://hbb31.netlify.app/",
+  "description": "A blog about tech, gaming and internet culture. Fixes that work, opinions you can argue with, and memes worth sharing",
   "defaultOgImage": "../../assets/images/site/defaultOgImage.jpg",
   "newsletter": {
-    "heading": "Get new essays by email",
-    "copy": "PLACEHOLDER: One thoughtful email when a new essay is published. No spam, unsubscribe any time.",
+    "heading": "Get the Randos in your inbox",
+    "copy": "One email when something new drops: tech fixes, game takes and the best memes of the week. No spam, unsubscribe anytime",
     "buttondownUsername": "PLACEHOLDER-username"
   },
-  "footerText": "PLACEHOLDER: A personal blog about technology, productivity and the small things that make life better.",
+  "footerText": "Tech, games, memes and tangents. Made with too much coffee",
   "socialLinks": [
-    { "label": "Mastodon", "url": "https://mastodon.social/@placeholder" },
-    { "label": "GitHub", "url": "https://github.com/placeholder" },
-    { "label": "LinkedIn", "url": "https://www.linkedin.com/in/placeholder" }
+    {
+      "label": "Mastodon",
+      "url": "https://mastodon.social/@placeholder"
+    },
+    {
+      "label": "GitHub",
+      "url": "https://github.com/placeholder"
+    },
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/placeholder"
+    }
   ]
 }
